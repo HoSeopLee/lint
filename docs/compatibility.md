@@ -11,7 +11,7 @@
 3. 2.0.1은 ESLint `>=10.0.1 <11.0.0`, TypeScript `>=6.0.2 <6.1.0`을 선언합니다. TypeScript 6 전체로 범위를 넓혀 해석하지 않습니다.
 4. 양쪽 모두 ESM / Flat Config입니다. legacy라는 이름이 `.eslintrc` 지원을 뜻하지는 않습니다.
 5. 1.1.1과 2.0.1에는 type-aware lint를 활성화하는 `project` / `projectService`가 없습니다. Promise 검사 등은 새 요구사항입니다.
-6. subpath export는 코드 진입점을 나눌 뿐, peerDependencies와 engines를 진입점별로 분리하지 않습니다. 단일 패키지 지원 여부는 아직 미확정입니다.
+6. subpath export는 코드 진입점을 나눌 뿐, peerDependencies와 engines를 진입점별로 분리하지 않습니다. 현재 진행 방향은 한 저장소에서 두 npm 패키지를 독립적으로 배포하는 것입니다.
 
 ## dependencies / peerDependencies
 
@@ -114,25 +114,22 @@ preset의 규칙 병합 순서는 TypeScript → import → React → a11y → P
 
 ESLint 9라고 TS 5만 쓰거나 ESLint 10이라고 TS 6만 쓰는 것은 아닙니다. 초기 기준은 위 조합이지만, 실제 필요한 교차 조합은 소비 프로젝트 조사 후 매트릭스에 추가합니다.
 
-## 단일 npm 패키지 가능성과 충돌
+## 패키지 분리와 의존성 관리
 
-[Node exports 문서](https://nodejs.org/api/packages.html#package-entry-points)와 [npm peerDependencies 문서](https://docs.npmjs.com/cli/v11/configuring-npm/package-json/#peerdependencies)를 기준으로 판단합니다.
+현재 진행 방향은 **한 저장소 + 두 npm 패키지**입니다.
 
-- `@hoseop/lint/legacy`와 `/modern`은 같은 package.json을 사용합니다. subpath만 나눠서는 peer 버전과 Node engines를 따로 선언할 수 없습니다.
-- ESLint peer를 합집합으로 넓혀도 `@eslint-react` 2.x/5.x와 `@eslint/js` 9/10의 구현 차이는 남습니다. 미지원 조합까지 허용하는 넓은 선언은 피합니다.
-- optional peer는 진입점별 자동 설치 기능이 아닙니다. 설치된 peer의 버전 충돌을 무시하는 해결책도 아닙니다.
-- 서로 다른 major를 npm alias로 직접 의존하게 하면 코드 import는 구분할 수 있지만, 하위 peer 해석과 modern plugin의 Node 요구 조건이 legacy 설치에도 영향을 줄 수 있습니다.
-- shared 모듈이나 루트 index가 양쪽 plugin을 eager import하면 선택하지 않은 환경의 의존성까지 필요해집니다. 공유 정책 데이터는 plugin import 없이 유지합니다.
-
-검토 순서:
-
-| 대안 | 장점 | 채택 조건 |
+| 폴더 | npm 패키지 | 참고 기준 |
 | --- | --- | --- |
-| 단일 package + subpath + 선택적 peer | 사용자에게 하나의 패키지 제공 | 각 환경에서 일반 설치로 충돌 없이 필요한 peer만 사용하고 잘못된 조합을 명확히 차단 |
-| 단일 package + 일부 npm alias | 서로 다른 plugin major를 코드에서 분리 | Node·peer 충돌과 설치 크기까지 검증됐을 때만 사용 |
-| `@hoseop/lint` + `@hoseop/lint-legacy` | peer·Node 요구 조건을 명확하게 분리 | 단일 패키지가 강제 옵션·불필요 업그레이드·복잡한 로더를 요구할 때 |
+| `packages/lint` | `@hoseop/lint` | 2.0.1, modern |
+| `packages/lint-legacy` | `@hoseop/lint-legacy` | 1.1.1, legacy |
 
-현재 권고는 **첫 modern 배포에서는 필요한 의존성만 검증하고, legacy 추가 시 단일 패키지 병행 설치를 검증하는 것**입니다. `--force`나 `--legacy-peer-deps`가 필요한 결과는 호환성 성공으로 취급하지 않습니다. 분리하더라도 같은 Git 저장소에서 공통 정책을 관리할 수 있습니다.
+각 패키지가 자체 package.json에서 peerDependencies·engines·exports·버전을 관리합니다. modern만 변경되면 해당 패키지만 배포할 수 있습니다. 초기 버전은 둘 다 0.1.0을 사용할 수 있지만 번호를 계속 맞출 의무는 없습니다.
+
+이 구분은 npm의 배포 단위입니다. npm workspace는 로컬에서 여러 패키지의 설치를 함께 관리하므로 의존성 충돌이 자동으로 모두 사라지는 것은 아닙니다. 특히 서로 다른 ESLint major의 peer 해석과 각 Node 환경을 따로 검증해야 합니다. workspace에 우연히 설치된 의존성을 소비 프로젝트에서도 사용할 수 있다고 가정하지 않습니다.
+
+패키지별 tarball을 별도의 소비 프로젝트에 설치하고, 자신의 의존성만으로 entry point가 로드되는지 확인합니다. `--force`나 `--legacy-peer-deps`는 호환성 성공으로 취급하지 않습니다. 공통 모듈을 공유할 경우 배포물에 포함하거나 명시적인 의존성으로 연결합니다.
+
+참고: [npm workspaces](https://docs.npmjs.com/cli/v11/using-npm/workspaces/), [npm peerDependencies](https://docs.npmjs.com/cli/v11/configuring-npm/package-json/#peerdependencies). 구체적인 작업 순서는 [작업 재개 안내](development.md)에 기록합니다.
 
 ## Oxlint 역할
 

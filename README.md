@@ -2,7 +2,7 @@
 
 Shared lint presets for JavaScript and TypeScript projects, supporting legacy and modern environments with ESLint and Oxlint.
 
-여러 프로젝트에서 공통으로 사용할 개인용 lint preset 라이브러리입니다. 패키지명은 `@hoseop/lint`를 검토하고 있습니다.
+여러 프로젝트에서 공통으로 사용할 개인용 lint preset 라이브러리입니다. 하나의 저장소에서 `@hoseop/lint`와 `@hoseop/lint-legacy`를 각각 배포하는 방향으로 준비합니다.
 
 > 현재는 분석과 설계 준비 단계입니다. 새 preset 구현, 의존성 설치, npm 배포는 아직 진행하지 않았습니다. 아래 지원 범위와 API는 목표이며 사용 가능한 기능을 의미하지 않습니다.
 
@@ -12,7 +12,7 @@ Shared lint presets for JavaScript and TypeScript projects, supporting legacy an
 - 2.x는 ESLint 10 / TypeScript 6 환경의 기준으로 활용합니다.
 - 공통 lint 정책을 유지하면서 환경에 맞게 plugin과 규칙 구현을 선택합니다.
 - legacy는 ESLint 중심, modern은 Oxlint와 ESLint의 역할 분담을 검토합니다.
-- 단일 패키지를 우선 검증하고, 의존성 충돌이나 설치 부담이 해결되지 않을 때 분리합니다.
+- npm workspace로 두 패키지를 함께 관리하고, 의존성·버전·배포는 패키지별로 관리합니다.
 
 ## 첫 배포 범위
 
@@ -39,13 +39,17 @@ legacy는 1.1.1 자료를 보존하며 후속 버전에서 지원합니다. Oxli
 
 ```js
 // 기존 React 프로젝트
-import config from '@hoseop/lint/legacy/react';
+import config from '@hoseop/lint-legacy/react';
 
 // 최신 React 프로젝트에서는 위 import 대신 사용
-import config from '@hoseop/lint/modern/react';
+import config from '@hoseop/lint/react';
 ```
 
-Next.js는 `legacy/next`, `modern/next`, Vue/Nuxt는 `modern/vue`, `modern/nuxt`를 검토합니다. ESLint preset을 import하는 것만으로 Oxlint가 실행되지는 않습니다. Oxlint 설정과 실행 명령은 별도로 제공할 계획입니다.
+Next.js는 `@hoseop/lint-legacy/next`, `@hoseop/lint/next`, Vue/Nuxt는 `@hoseop/lint/vue`, `@hoseop/lint/nuxt`를 검토합니다. ESLint preset을 import하는 것만으로 Oxlint가 실행되지는 않습니다. Oxlint 설정과 실행 명령은 별도로 제공할 계획입니다.
+
+## 다른 컴퓨터에서 이어서 작업
+
+[작업 재개 안내](docs/development.md)에서 clone 명령, 패키지 구조, 버전 관리 방식과 다음 작업을 확인하세요. 현재 실제 workspace와 배포용 소스는 아직 생성하지 않았습니다.
 
 ## 문서
 
@@ -60,6 +64,7 @@ README.md
 docs/
   compatibility.md
   roadmap.md
+  development.md
 reference/
   README.md
   v1.1.1/

@@ -14,7 +14,7 @@
 - [ ] 실제 설치·lint·자동 수정 검증
 - [ ] 첫 npm 배포
 
-현재 저장소는 준비 자료입니다. 참고 폴더를 그대로 publish하지 않습니다.
+현재 저장소는 준비 자료입니다. 참고 폴더를 그대로 publish하지 않습니다. 최신 패키지 구조와 다른 컴퓨터에서의 시작 절차는 [작업 재개 안내](development.md)를 따릅니다.
 
 ## 첫 배포: modern React / Next
 
@@ -23,8 +23,8 @@
 할 일:
 
 1. `@hoseop` scope 권한과 `@hoseop/lint` 이름을 확인합니다.
-2. 2.0.1의 React/Next 설정을 배포용 소스로 옮기고, 필요한 공통 모듈만 공유합니다.
-3. 공개 경로를 `@hoseop/lint/modern/react`, `@hoseop/lint/modern/next`로 시작하는 안을 검증합니다. base/TypeScript는 내부 구성에 필요해도 독립 export는 필요할 때 추가합니다.
+2. 루트에 private npm workspace를 만들고, 2.0.1의 React/Next 설정을 `packages/lint`로 옮깁니다.
+3. 공개 경로를 `@hoseop/lint/react`, `@hoseop/lint/next`로 시작하는 안을 검증합니다. base/TypeScript는 내부 구성에 필요해도 독립 export는 필요할 때 추가합니다.
 4. ESLint 10 / TS 6.0.x / Node 최소 버전과 실제 plugin peer/engine을 검증합니다.
 5. Next plugin이 없는 React 소비자와 Next 소비자를 각각 확인합니다.
 6. 설치 예제, override 방법, formatting 및 타입 검사 명령을 README에 작성합니다.
@@ -48,7 +48,7 @@
 
 1.1.1을 기준으로 ESLint 9 / TS 5 환경을 유지합니다. 먼저 해당 소비 프로젝트의 lockfile·override·inline disable과 기존 진단/fix 결과를 수집합니다.
 
-legacy 전용 소비자와 modern 전용 소비자를 별도 설치해 단일 패키지 가능성을 확인합니다. subpath export는 peerDependencies와 Node engines를 분리하지 않습니다. alias나 복잡한 로더가 필요해지면 `@hoseop/lint-legacy` 별도 패키지를 검토합니다.
+같은 저장소의 `packages/lint-legacy`에서 `@hoseop/lint-legacy`를 독립 패키지로 구현합니다. 각 package.json에 의존성·peerDependencies·engines·exports를 선언하고 별도로 배포합니다. workspace 설치가 성공하더라도 각 tarball을 격리된 소비 프로젝트에 설치해 확인합니다.
 
 완료 기준: 기존 소비 프로젝트를 불필요하게 업그레이드하지 않고 진단과 자동 수정 결과가 유지됩니다. 의도된 namespace 변경의 override 이전 방법을 문서화합니다. ESLint 8은 실제 필요와 검증 근거가 있을 때 별도 지원합니다.
 
@@ -64,21 +64,29 @@ typed lint는 프로젝트 요구와 type 정보 처리 비용을 확인해 담�
 
 실제 사용하는 프로젝트가 생기면 parser, SFC script/template, Nuxt 자동 import와 전역을 검증합니다. 기존 React/Next 소비자에 불필요한 의존성이 추가되지 않아야 합니다.
 
-## 구조 제안
+## 패키지 구조
 
-첫 구현은 필요한 디렉터리만 만듭니다.
+하나의 레포에서 npm workspace로 여러 패키지를 관리합니다. 루트는 `private: true`로 두고 배포하지 않습니다. 아래 구조는 구현 계획입니다.
 
 ```text
-src/
-  modern/       # React / Next와 필요한 공통 설정
+package.json                 # private, workspaces: ["packages/*"]
+packages/
+  lint/
+    package.json             # @hoseop/lint
+    src/
+  lint-legacy/
+    package.json             # @hoseop/lint-legacy
+    src/
 ```
 
-legacy와의 실제 공통점이 생기면 `shared/`를 추출합니다. legacy, oxlint, vue, nuxt 디렉터리와 빈 export를 미리 생성하지 않습니다. 문서상의 API는 설치 검증 후 확정합니다.
+먼저 modern 패키지만 구현하고 legacy 폴더는 해당 작업 시 추가합니다. 공통 코드는 실제 필요가 확인될 때 공유합니다. 배포 코드가 패키지 밖의 파일을 상대 경로로 import하면 설치 후 누락되므로, 공유 코드는 각 배포물에 포함하거나 별도 의존성으로 제공해야 합니다.
 
 ## 버전과 작업 단위
 
-- 첫 배포: 검증된 modern 기능을 `0.1.0`으로 시작하는 안
-- 후속 배포: legacy·Oxlint·framework 기능을 각각 검증한 뒤 추가
+- 첫 배포: `@hoseop/lint@0.1.0`, legacy는 준비되면 `@hoseop/lint-legacy@0.1.0`으로 시작하는 안
+- 각 패키지의 버전은 독립적으로 올립니다. 같은 번호를 사용할 수 있지만 동기화는 필수가 아닙니다.
+- Git 태그는 `lint-v0.1.0`, `lint-legacy-v0.1.0`처럼 패키지를 구분합니다.
+- 후속 배포: 변경된 패키지만 검증하고 배포합니다.
 - 버전과 CHANGELOG: 새 규칙·severity·자동 수정 변경이 소비 코드에 미치는 영향을 명시하고, 호환성을 깨는 변경을 조용히 섞지 않음
 - 브랜치: `docs/project-plan`, `feat/modern-presets`, `feat/legacy-presets`, `feat/oxlint-config`
 - 커밋: `docs: 개인 패키지 배포 계획 정리`처럼 변경 결과를 표현
