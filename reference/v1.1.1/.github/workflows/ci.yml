@@ -1,0 +1,63 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    name: Node ${{ matrix.node }} / ${{ matrix.dependencies }} peers
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - node: 20.19.0
+            dependencies: minimum
+          - node: 20
+            dependencies: latest
+          - node: 22
+            dependencies: latest
+          - node: 24
+            dependencies: latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+
+      - name: Install latest supported dependencies
+        if: matrix.dependencies == 'latest'
+        run: npm install --no-package-lock '@next/eslint-plugin-next@>=15.0.0 <17.0.0'
+
+      - name: Install minimum supported dependencies
+        if: matrix.dependencies == 'minimum'
+        run: |
+          npm install --no-save --no-package-lock \
+            '@eslint/js@9.0.0' \
+            '@eslint-react/eslint-plugin@2.13.0' \
+            '@next/eslint-plugin-next@15.0.0' \
+            'eslint@9.0.0' \
+            'eslint-config-prettier@9.0.0' \
+            'eslint-plugin-import-x@4.0.0' \
+            'eslint-plugin-jsx-a11y@6.10.0' \
+            'eslint-plugin-no-relative-import-paths@1.6.0' \
+            'eslint-plugin-prettier@5.1.0' \
+            'eslint-plugin-react-hooks@5.0.0' \
+            'eslint-plugin-react-refresh@0.4.0' \
+            'eslint-plugin-simple-import-sort@12.0.0' \
+            'eslint-plugin-unused-imports@4.0.0' \
+            'globals@15.0.0' \
+            'prettier@3.0.0' \
+            'typescript@4.8.4' \
+            'typescript-eslint@8.0.0'
+
+      - name: Test
+        run: npm test

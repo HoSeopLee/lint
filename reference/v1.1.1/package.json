@@ -1,0 +1,85 @@
+{
+  "name": "@hoseop/lint",
+  "version": "1.1.1",
+  "description": "Shared ESLint configuration for React and Next.js projects",
+  "main": "index.js",
+  "type": "module",
+  "exports": {
+    ".": "./index.js",
+    "./next": "./next.js",
+    "./react": "./react.js",
+    "./ts": "./rules/typescript/ts.js",
+    "./a11y": "./rules/accessibility/a11y.js",
+    "./import": "./rules/base/imports.js",
+    "./prettier": "./rules/formatting/prettier.js",
+    "./presets/base": "./presets/base.js",
+    "./presets/react": "./presets/react.js",
+    "./presets/next": "./presets/next.js",
+    "./presets/full": "./presets/full.js"
+  },
+  "keywords": [
+    "eslint",
+    "eslintconfig",
+    "react",
+    "nextjs",
+    "next",
+    "typescript",
+    "prettier"
+  ],
+  "author": "HoSeopLee",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HoSeopLee/lint.git"
+  },
+  "bugs": {
+    "url": "https://github.com/HoSeopLee/lint/issues"
+  },
+  "homepage": "https://github.com/HoSeopLee/lint#readme",
+  "engines": {
+    "node": ">=20.19.0"
+  },
+  "peerDependencies": {
+    "@eslint/js": ">=9.0.0 <10.0.0",
+    "@eslint-react/eslint-plugin": "^2.13.0",
+    "@next/eslint-plugin-next": ">=15.0.0 <17.0.0",
+    "eslint": ">=9.0.0 <10.0.0",
+    "eslint-config-prettier": ">=9.0.0 <11.0.0",
+    "eslint-plugin-import-x": ">=4.0.0 <5.0.0",
+    "eslint-plugin-jsx-a11y": ">=6.10.0 <7.0.0",
+    "eslint-plugin-no-relative-import-paths": ">=1.6.0 <2.0.0",
+    "eslint-plugin-prettier": ">=5.1.0 <6.0.0",
+    "eslint-plugin-react-hooks": ">=5.0.0 <8.0.0",
+    "eslint-plugin-react-refresh": ">=0.4.0 <0.6.0",
+    "eslint-plugin-simple-import-sort": ">=12.0.0 <14.0.0",
+    "eslint-plugin-unused-imports": ">=4.0.0 <5.0.0",
+    "globals": ">=15.0.0 <18.0.0",
+    "prettier": ">=3.0.0 <4.0.0",
+    "typescript": ">=4.8.4 <6.0.0",
+    "typescript-eslint": ">=8.0.0 <9.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@next/eslint-plugin-next": {
+      "optional": true
+    }
+  },
+  "scripts": {
+    "test": "npm run test:load && npm run test:lint && npm run test:import-sort && npm run test:rules",
+    "test:load": "node __tests__/test-load.js",
+    "test:lint": "node __tests__/test-config.js",
+    "test:import-sort": "node __tests__/test-import-sort.js",
+    "test:import-sort:fail": "node __tests__/test-import-sort-fail.js",
+    "test:rules": "node __tests__/test-rules.js"
+  },
+  "files": [
+    "index.js",
+    "react.js",
+    "next.js",
+    "presets/**/*.js",
+    "rules/**/*.js",
+    "README.md",
+    "README.ko.md",
+    "CHANGELOG.md"
+  ],
+  "private": true
+}
