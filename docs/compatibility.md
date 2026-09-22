@@ -142,7 +142,6 @@ Oxlint에도 [type-aware 모드](https://oxc.rs/docs/guide/usage/linter/type-awa
 ## 아직 검증하지 않은 사항
 
 - 전체 버전 조합의 호환성(일부 확인한 조합은 배포 검증 기록 참조)
-- 2.0.0 npm 실제 배포와 Git 태그 (1.0.0은 배포·설치·Git 태그 확인 완료)
 - 실제 소비 프로젝트 목록과 필요한 Node/ESLint 8 최소 버전
 - plugin별 peer/engine의 전이 제약, npm 외 패키지 매니저 호환성
 - 규칙별 Oxlint 옵션·자동 수정 동등성, Vue/Nuxt parser와 template 범위
