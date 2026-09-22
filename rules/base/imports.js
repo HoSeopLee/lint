@@ -1,5 +1,6 @@
 import importX from 'eslint-plugin-import-x';
 import unusedImports from 'eslint-plugin-unused-imports';
+import noRelativeImportPaths from 'eslint-plugin-no-relative-import-paths';
 import simpleImportSort from 'eslint-plugin-simple-import-sort';
 
 /**
@@ -13,6 +14,7 @@ export default {
 	plugins: {
 		'import-x': importX,
 		'unused-imports': unusedImports,
+		'no-relative-import-paths': noRelativeImportPaths,
 		'simple-import-sort': simpleImportSort,
 	},
 	rules: {
@@ -68,17 +70,10 @@ export default {
 				caughtErrorsIgnorePattern: '^_',
 			},
 		],
-		// 상위 폴더 상대 경로 대신 alias 사용 권장, 같은 폴더 상대 경로는 허용 (warn)
-		'no-restricted-imports': [
+		// 상대 경로 대신 @ 사용 권장, 같은 폴더만 상대 허용 (warn)
+		'no-relative-import-paths/no-relative-import-paths': [
 			'warn',
-			{
-				patterns: [
-					{
-						group: ['../**'],
-						message: '상위 폴더 상대 경로 대신 alias를 사용하세요.',
-					},
-				],
-			},
+			{ allowSameFolder: true, rootDir: 'src', prefix: '@' },
 		],
 	},
 };

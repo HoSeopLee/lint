@@ -66,22 +66,6 @@ export default config;`;
 			overrideConfigFile: tempConfigPath,
 		});
 
-		// TypeScript가 제공하는 React 타입 네임스페이스를 no-undef가 오탐하지 않아야 함
-		const [reactTypeResult] = await eslint.lintText(
-			"type Props = React.ComponentProps<'div'>;\nexport const value: Props | undefined = undefined;",
-			{ filePath: 'react-type-namespace.tsx' },
-		);
-		const noUndefMessages = reactTypeResult.messages.filter(
-			(message) => message.ruleId === 'no-undef',
-		);
-		if (noUndefMessages.length > 0) {
-			throw new Error(
-				`React 타입 네임스페이스를 no-undef가 오탐했습니다: ${noUndefMessages
-					.map((message) => message.message)
-					.join('; ')}`,
-			);
-		}
-
 		// fixtures 디렉토리의 모든 파일 가져오기
 		const files = await readdir(fixturesDir);
 		const testFiles = files

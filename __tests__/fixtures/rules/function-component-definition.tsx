@@ -1,4 +1,4 @@
-// @expect-pass: @eslint-react/jsx-no-useless-fragment
+// @expect-pass: @eslint-react/no-useless-fragment
 // v1.0.4: 화살표 함수 + 함수 선언문 둘 다 허용 (기존엔 화살표만 허용)
 import React from 'react';
 

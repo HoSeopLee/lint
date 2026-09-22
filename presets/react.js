@@ -52,8 +52,6 @@ export default [
 			...a11yConfig.rules,
 			...prettierConfig.rules,
 			...generalRules,
-			// TypeScript가 미정의 식별자를 검사하므로 React 타입 네임스페이스 오탐 방지
-			'no-undef': 'off',
 		},
 	},
 	{

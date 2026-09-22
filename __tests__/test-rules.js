@@ -28,7 +28,7 @@ async function testRules() {
 	const eslint = new ESLint({ overrideConfigFile: tempConfigPath });
 
 	const files = (await readdir(fixturesDir))
-		.filter((f) => /\.[jt]sx?$/.test(f))
+		.filter((f) => f.endsWith('.tsx') || f.endsWith('.ts'))
 		.map((f) => path.join(fixturesDir, f));
 
 	let passed = 0;

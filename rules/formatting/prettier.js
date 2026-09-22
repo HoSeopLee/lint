@@ -11,9 +11,7 @@ export default {
 		prettier,
 	},
 	rules: {
-		// Prettier 포맷 위반을 ESLint 오류로 처리 (error)
 		'prettier/prettier': ['error'],
-		// Prettier와 충돌하는 ESLint 스타일 규칙 비활성화 (off)
 		...(eslintConfigPrettier.rules || eslintConfigPrettier),
 	},
 };

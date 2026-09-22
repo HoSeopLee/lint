@@ -1,6 +1,6 @@
 {
   "name": "@hoseop/lint",
-  "version": "2.0.0",
+  "version": "1.0.0",
   "description": "Shared ESLint configuration for React and Next.js projects",
   "main": "index.js",
   "type": "module",
@@ -37,25 +37,26 @@
   },
   "homepage": "https://github.com/HoSeopLee/lint#readme",
   "engines": {
-    "node": "^22.13.0 || >=24.0.0"
+    "node": ">=20.19.0"
   },
   "peerDependencies": {
-    "@eslint/js": ">=10.0.1 <11.0.0",
-    "@eslint-react/eslint-plugin": ">=5.16.1 <6.0.0",
-    "@next/eslint-plugin-next": ">=16.0.0 <17.0.0",
-    "eslint": ">=10.0.1 <11.0.0",
-    "eslint-config-prettier": ">=10.1.0 <11.0.0",
-    "eslint-plugin-import-x": ">=4.17.1 <5.0.0",
-    "eslint-plugin-jsx-a11y-x": ">=0.2.0 <1.0.0",
-    "eslint-plugin-prettier": ">=5.5.6 <6.0.0",
-    "eslint-plugin-react-hooks": ">=7.1.1 <8.0.0",
-    "eslint-plugin-react-refresh": ">=0.5.3 <0.6.0",
-    "eslint-plugin-simple-import-sort": ">=13.0.0 <14.0.0",
-    "eslint-plugin-unused-imports": ">=4.4.1 <5.0.0",
-    "globals": ">=17.7.0 <18.0.0",
-    "prettier": ">=3.9.5 <4.0.0",
-    "typescript": ">=6.0.2 <6.1.0",
-    "typescript-eslint": ">=8.64.0 <9.0.0"
+    "@eslint/js": ">=9.0.0 <10.0.0",
+    "@eslint-react/eslint-plugin": "^2.13.0",
+    "@next/eslint-plugin-next": ">=15.0.0 <17.0.0",
+    "eslint": ">=9.0.0 <10.0.0",
+    "eslint-config-prettier": ">=9.0.0 <11.0.0",
+    "eslint-plugin-import-x": ">=4.0.0 <5.0.0",
+    "eslint-plugin-jsx-a11y": ">=6.10.0 <7.0.0",
+    "eslint-plugin-no-relative-import-paths": ">=1.6.0 <2.0.0",
+    "eslint-plugin-prettier": ">=5.1.0 <6.0.0",
+    "eslint-plugin-react-hooks": ">=5.0.0 <8.0.0",
+    "eslint-plugin-react-refresh": ">=0.4.0 <0.6.0",
+    "eslint-plugin-simple-import-sort": ">=12.0.0 <14.0.0",
+    "eslint-plugin-unused-imports": ">=4.0.0 <5.0.0",
+    "globals": ">=15.0.0 <18.0.0",
+    "prettier": ">=3.0.0 <4.0.0",
+    "typescript": ">=4.8.4 <6.0.0",
+    "typescript-eslint": ">=8.0.0 <9.0.0"
   },
   "peerDependenciesMeta": {
     "@next/eslint-plugin-next": {
@@ -83,24 +84,25 @@
   ],
   "publishConfig": {
     "access": "public",
-    "tag": "latest"
+    "tag": "legacy"
   },
   "devDependencies": {
-    "@eslint/js": "10.0.1",
-    "@eslint-react/eslint-plugin": "5.16.1",
-    "@next/eslint-plugin-next": "16.0.0",
-    "eslint": "10.0.1",
-    "eslint-config-prettier": "10.1.0",
-    "eslint-plugin-import-x": "4.17.1",
-    "eslint-plugin-jsx-a11y-x": "0.2.0",
-    "eslint-plugin-prettier": "5.5.6",
-    "eslint-plugin-react-hooks": "7.1.1",
-    "eslint-plugin-react-refresh": "0.5.3",
-    "eslint-plugin-simple-import-sort": "13.0.0",
-    "eslint-plugin-unused-imports": "4.4.1",
-    "globals": "17.7.0",
-    "prettier": "3.9.5",
-    "typescript": "6.0.2",
-    "typescript-eslint": "8.64.0"
+    "@eslint/js": "9.0.0",
+    "@eslint-react/eslint-plugin": "2.13.0",
+    "@next/eslint-plugin-next": "15.0.0",
+    "eslint": "9.0.0",
+    "eslint-config-prettier": "9.0.0",
+    "eslint-plugin-import-x": "4.0.0",
+    "eslint-plugin-jsx-a11y": "6.10.0",
+    "eslint-plugin-no-relative-import-paths": "1.6.0",
+    "eslint-plugin-prettier": "5.1.0",
+    "eslint-plugin-react-hooks": "5.0.0",
+    "eslint-plugin-react-refresh": "0.4.0",
+    "eslint-plugin-simple-import-sort": "12.0.0",
+    "eslint-plugin-unused-imports": "4.0.0",
+    "globals": "15.0.0",
+    "prettier": "3.0.0",
+    "typescript": "4.8.4",
+    "typescript-eslint": "8.0.0"
   }
 }
