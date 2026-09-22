@@ -35,7 +35,7 @@ npm install -D @next/eslint-plugin-next@15
 npm install -D @next/eslint-plugin-next@16
 ```
 
-Node 지원 선언은 1.x에서 `^20.19.0 || ^22.13.0 || >=24.0.0`, 2.x에서 `^22.13.0 || >=24.0.0`입니다. 설치 시 각 plugin의 engine 제약도 적용됩니다. 실제 확인한 조합은 [배포 검증 기록](docs/release-checklist.md)에 기록합니다.
+Node 지원 선언은 1.x에서 `>=20.19.0`, 2.x에서 `^22.13.0 || >=24.0.0`입니다. 설치 시 각 plugin의 engine 제약도 적용됩니다. 실제 확인한 조합은 [배포 검증 기록](docs/release-checklist.md)에 기록합니다.
 
 ## 사용
 
