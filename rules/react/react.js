@@ -70,7 +70,7 @@ const legacyReactRules = {
 export default {
   plugins: {
     ...eslintReact.configs["recommended-typescript"].plugins,
-    "hoseop-react": legacyReactRules,
+    "broccoil-react": legacyReactRules,
     "react-hooks": reactHooks,
     "react-refresh": reactRefresh,
   },
@@ -117,7 +117,7 @@ export default {
     // javascript: URL 사용 경고 (warn)
     "@eslint-react/dom-no-script-url": "warn",
     // 외부 _blank 링크에 rel="noopener" 누락 시 경고 (warn)
-    "hoseop-react/no-unsafe-target-blank": "warn",
+    "broccoil-react/no-unsafe-target-blank": "warn",
     // 클래스 컴포넌트의 사용되지 않는 state 경고 (warn)
     "@eslint-react/no-unused-state": "warn",
     // Hooks 규칙 (error)

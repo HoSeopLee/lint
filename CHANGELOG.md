@@ -17,6 +17,6 @@
 - 부모 폴더 상대 import는 core `no-restricted-imports`로 경고합니다. 1.x plugin의 alias 자동 변환은 제공하지 않습니다.
 - JS/JSX 미정의 식별자는 core `no-undef`로 검사합니다. TS/TSX에서는 이 규칙을 꺼서 React 타입 namespace 오탐을 방지하며 타입 검사는 별도로 실행합니다.
 - 1.x의 명시적 JSX 중복 props, boolean/Fragment 축약, string ref 규칙 일부는 2.x 목록에 없습니다. 완전히 동일한 진단 결과를 보장하지 않습니다.
-- Prettier 연결, import 정렬, 미사용 import 제거, 로컬 `hoseop-react` 규칙 ID와 exhaustive-deps off 정책은 유지합니다.
+- Prettier 연결, import 정렬, 미사용 import 제거와 exhaustive-deps off 정책은 유지합니다. 외부 링크 규칙 ID는 `broccoil-react/no-unsafe-target-blank`입니다. 1.0.0의 `hoseop-react/no-unsafe-target-blank`를 override하거나 inline disable했다면 새 ID로 변경해야 합니다.
 
 1.x는 `1.x` 브랜치에서 별도의 `legacy` 태그로 유지합니다. 그 계열의 첫 배포 내역은 [1.x CHANGELOG](https://github.com/HoSeopLee/lint/blob/1.x/CHANGELOG.md)를 참고하세요.

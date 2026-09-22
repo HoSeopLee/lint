@@ -1,4 +1,4 @@
-// @expect-pass: hoseop-react/no-unsafe-target-blank
+// @expect-pass: broccoil-react/no-unsafe-target-blank
 // v1.0.4: allowReferrer: true 적용 (noopener만 있어도 통과)
 import React from 'react';
 

@@ -85,7 +85,7 @@ preset의 규칙 병합 순서는 TypeScript → import → React → a11y → P
 | JSX 중복 props | 1.1.1 explicit 규칙, 2.0.1에서 제거 | MODERNIZE | JS 파서 및 TS 진단 범위 비교, 검사 공백 확인 |
 | JSX 미정의 식별자 | 1.1.1 전용 규칙 → 2.0.1 core no-undef, TS에서는 off | MODERNIZE | JS/JSX는 ESLint, TS는 타입 검사와 함께 검증 |
 | React deprecated API | 1.1.1 plugin preset에서 동적 추출 → 2.0.1 명시 목록 | MODERNIZE | React 버전별 필요 정책 확인 |
-| 외부 링크 `_blank` | 로컬 `hoseop-react/no-unsafe-target-blank` (개인 namespace로 정리) | LEGACY / MODERNIZE | 동적 href·spread·rel 표현식도 fixture로 비교. 완전 동등 보장 없음 |
+| 외부 링크 `_blank` | 로컬 `broccoil-react/no-unsafe-target-blank` (개인 namespace로 정리) | LEGACY / MODERNIZE | 동적 href·spread·rel 표현식도 fixture로 비교. 완전 동등 보장 없음 |
 | `react-hooks/rules-of-hooks` | 두 버전 error | SHARED / OXLINT 후보 | React Compiler 추가 규칙과 분리 |
 | `react-hooks/exhaustive-deps` | 두 기준 버전 모두 off | SHARED | 활성화는 새로운 정책 변경으로 취급 |
 | React Refresh | TS/TSX 기본 off, JS/JSX warn + allowConstantExport, 테스트 off | LEGACY / MODERNIZE | Vite/Next 적용 차이 검증 |
@@ -142,9 +142,24 @@ Oxlint에도 [type-aware 모드](https://oxc.rs/docs/guide/usage/linter/type-awa
 ## 아직 검증하지 않은 사항
 
 - 전체 버전 조합의 호환성(일부 확인한 조합은 배포 검증 기록 참조)
-- npm 실제 배포와 Git 태그 (broccoil 조직의 leehoseop owner 권한은 확인됨)
+- 2.0.0 npm 실제 배포와 Git 태그 (1.0.0은 배포·설치·Git 태그 확인 완료)
 - 실제 소비 프로젝트 목록과 필요한 Node/ESLint 8 최소 버전
 - plugin별 peer/engine의 전이 제약, npm 외 패키지 매니저 호환성
 - 규칙별 Oxlint 옵션·자동 수정 동등성, Vue/Nuxt parser와 template 범위
 
 각 릴리스에 포함할 항목만 검증하고 README에 지원 기능으로 표시합니다. 후속 목표는 첫 배포를 막는 조건이 아닙니다.
+
+## npm 원본 배포물 대조 — 2026-09-22
+
+로컬 reference만을 기준으로 삼지 않고 `npm pack --ignore-scripts`로 받은 실제 원본과 각 유지 브랜치를 비교했습니다.
+
+| 원본 npm 버전 | 비교 대상 | 결과 |
+| --- | --- | --- |
+| smartm2m-eslint-config@1.1.1 | 1.x의 @broccoil/lint@1.0.0 | 실행 파일 15개와 exports·peer 범위·optional peer 일치, 아래 명칭 차이 제외 |
+| smartm2m-eslint-config@2.0.1 | main의 @broccoil/lint@2.0.0 | 실행 파일 15개와 exports·peer 범위·optional peer 일치, 아래 명칭 차이 제외 |
+
+실행 파일의 차이는 진입점 주석과 React plugin namespace의 `smartm2m-react` → `broccoil-react` 변경뿐입니다. 이를 명시적으로 정규화한 문자열 비교를 통과했습니다. 따라서 같은 의존성 버전과 입력에서는 각 원본의 규칙·옵션·자동 수정 구현을 유지하지만, 사용자 override와 inline disable의 `smartm2m-react/no-unsafe-target-blank`는 새 ID로 변경해야 합니다.
+
+위 비교는 현재 브랜치의 코드 기준입니다. 이미 게시된 `1.0.0`은 `hoseop-react` namespace를 사용하며, 1.x의 `broccoil-react` 전환은 아직 npm에 반영하지 않았습니다.
+
+1.x의 Node engines는 원본과 같은 `>=20.19.0`입니다. main은 원본 `>=22.13.0`보다 좁은 `^22.13.0 || >=24.0.0`으로 Node 23을 제외합니다. 패키지명과 버전, 문서, 배포 파일 목록 및 개발·검증 환경도 원본과 다릅니다. 이는 두 major 사이의 동작이 동일하다는 뜻이 아니며, 1.x→2.x의 규칙·자동 수정 차이는 위 분석과 README를 따릅니다.

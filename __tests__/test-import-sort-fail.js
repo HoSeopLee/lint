@@ -60,7 +60,7 @@ async function testImportSortFailure() {
 		if (importSortErrors.length === 0) {
 			console.log('❌ 실패 사례: simple-import-sort 규칙이 적용되지 않아');
 			console.log('   잘못된 import 순서를 감지하지 못했습니다.');
-			console.log('\n   → @hoseop/lint를 사용하면 이 문제가 해결됩니다.');
+			console.log('\n   → @broccoil/lint를 사용하면 이 문제가 해결됩니다.');
 			process.exit(1);
 		}
 	} catch (error) {

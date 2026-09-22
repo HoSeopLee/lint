@@ -1,6 +1,6 @@
 # 첫 배포 검토
 
-검증 및 사용자 승인: 2026-09-22. 승인된 두 버전의 병합·배포를 진행합니다.
+검증 및 사용자 승인: 2026-09-22. [PR #1](https://github.com/HoSeopLee/lint/pull/1)은 병합했고, `1.0.0`을 배포했습니다. `2.0.0`은 README 검토 요청으로 npm 인증 전에 취소했으며 아직 게시하지 않았습니다.
 
 ## 브랜치 분리
 
@@ -17,7 +17,13 @@
 
 각 브랜치 루트의 소스·package.json·lockfile·CI가 해당 계열만 실행합니다. reference의 다른 버전을 import하지 않습니다. 두 버전의 공개 import 경로는 동일합니다.
 
-최종 패키지명은 **`@broccoil/lint`**입니다. 사용자가 생성한 npm 조직의 정확한 철자 `broccoil`을 확인하고 확정했습니다. `npm org ls broccoil --json`에서 로그인 계정 `leehoseop`의 owner 권한을 확인했습니다. 패키지 조회에는 아직 게시된 버전이 없습니다.
+최종 패키지명은 **`@broccoil/lint`**입니다. 사용자가 생성한 npm 조직의 정확한 철자 `broccoil`을 확인하고 확정했습니다. `npm org ls broccoil --json`에서 로그인 계정 `leehoseop`의 owner 권한을 확인했습니다.
+
+게시된 `1.0.0`의 gitHead는 `a9e411bcf426ae16d3b128696bdd8cd3d5323076`, shasum은 `bc47450eb34b551e3cee5396958f9178345428eb`입니다. `v1.0.0` Git 태그도 해당 커밋을 가리킵니다. npm에서 받은 `1.0.0`을 별도의 React/Next 소비 프로젝트에 설치해 진단과 자동 수정을 확인했습니다.
+
+현재 npm의 `legacy`와 `latest`는 모두 `1.0.0`입니다. `2.0.0` 배포 후 `latest`를 확인해야 합니다. README 수정은 사용자 요청에 따라 두 브랜치에 반영하며, 이미 게시한 `1.0.0`은 재배포하지 않습니다.
+
+후속 검토에서 커스텀 React plugin 이름도 `broccoil-react`로 확정했습니다. 두 브랜치의 실행 코드와 fixture를 맞추며, 1.x의 이 변경은 미배포 변경 내역에 기록합니다. 이미 게시된 `1.0.0`의 규칙 ID는 `hoseop-react/no-unsafe-target-blank`이므로 README에 설치 버전에 따른 차이를 안내합니다.
 
 ## 실행한 검증
 
@@ -44,15 +50,17 @@
 
 기존 테스트에는 Next pages 디렉터리가 없어 안내 경고가 출력됩니다. 새 소비자 검사에서는 실제 pages 디렉터리를 만들고 검증했습니다. 1.x 설치에는 기존 ESLint 9 및 일부 전이 의존성의 deprecated 안내가 나오며, 기존 환경 보존을 위해 이번 배포에서 major를 바꾸지 않았습니다.
 
-최종 이름으로 실행한 GitHub CI 결과: [1.x · 22fa806](https://github.com/HoSeopLee/lint/actions/runs/35699733080), [2.x · bc5987b](https://github.com/HoSeopLee/lint/actions/runs/35699735572). 두 계열 모두 최소 Node와 Node 24 조합을 통과했습니다. 릴리스 준비 과정에서 추가한 변경은 README·CHANGELOG·승인 기록입니다.
+릴리스 소스의 GitHub CI 결과: [1.x · a9e411b](https://github.com/HoSeopLee/lint/actions/runs/35700288193), [main · e594c67](https://github.com/HoSeopLee/lint/actions/runs/35700404114). 두 계열 모두 최소 Node와 Node 24 조합을 통과했습니다.
 
-## 배포 전 남은 확인
+## 배포 확인
 
 - [x] 최종 패키지명 `@broccoil/lint` 및 `broccoil` owner 권한 확인
 - [x] `@broccoil/lint@1.0.0`·`@broccoil/lint@2.0.0` tarball의 React/Next 설치·진단·자동 수정 검증 (Node 24.18.0)
 - [x] GitHub CI 결과 확인 (두 계열 합계 4개 Node 조합 통과)
 - [x] 브랜치·버전·태그·검증 결과에 대한 사용자 승인 (2026-09-22)
-- [ ] 승인된 변경을 유지 브랜치에 반영하고 두 버전 npm 배포
-- [ ] 배포된 버전·dist-tag·설치 확인 및 Git 릴리스 태그 기록
+- [x] 승인된 변경을 유지 브랜치에 반영 (PR #1 병합)
+- [x] `1.0.0` npm 배포·실제 설치 검사·Git 태그 기록
+- [ ] README 수정본 확인 후 `2.0.0` npm 배포
+- [ ] `2.0.0` 실제 설치 검사·Git 태그 기록 및 최종 dist-tag 확인
 
 자동 npm 배포 workflow는 없습니다. package.json의 prepublishOnly는 테스트만 수행하며 npm publish는 별도로 실행해야 합니다.
