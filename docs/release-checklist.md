@@ -18,7 +18,7 @@
 
 각 브랜치 루트의 소스·package.json·lockfile·CI가 해당 계열만 실행합니다. reference의 다른 버전을 import하지 않습니다. 두 버전의 공개 import 경로는 동일합니다.
 
-패키지명은 현재 코드에 `@hoseop/lint`로 유지되어 있으나 **최종 scope 선택 대기 중**입니다. npm 로그인 계정은 `leehoseop`이고 `@hoseop` 조직 조회는 404였습니다. `@leehoseop/lint`로 바꿀지, `@hoseop` 권한을 별도로 준비할지 확인한 뒤 양쪽 이름을 확정합니다.
+최종 패키지명은 **`@broccoil/lint`**입니다. 사용자가 생성한 npm 조직의 정확한 철자 `broccoil`을 확인하고 확정했습니다. `npm org ls broccoil --json`에서 로그인 계정 `leehoseop`의 owner 권한을 확인했습니다. 패키지 조회에는 아직 게시된 버전이 없습니다.
 
 ## 실행한 검증
 
@@ -29,7 +29,7 @@
 | 기존 규칙 fixture | 5/5 통과 | 8/8 통과 |
 | tarball React/Next 설치·진단·수정 | Node 20.19.0, 24.18.0 통과 | Node 22.13.0, 24.18.0 통과 |
 | GitHub CI (Linux) | Node 20.19.0 / 24 통과 | Node 22.13.0 / 24 통과 |
-| 참고 코드와 runtime 파일 비교 | 동일 | 동일 |
+| 참고 코드와 실행 로직 비교 | 동일 (진입점 주석만 정리) | 동일 (진입점 주석만 정리) |
 | npm pack --dry-run | 19개 파일 | 19개 파일 |
 
 검증에 --force / --legacy-peer-deps를 사용하지 않았습니다. engine-strict 설치로 engine 제약도 확인했습니다. 이 결과는 모든 peer 버전 조합의 호환성을 보장하지 않습니다.
@@ -45,11 +45,12 @@
 
 기존 테스트에는 Next pages 디렉터리가 없어 안내 경고가 출력됩니다. 새 소비자 검사에서는 실제 pages 디렉터리를 만들고 검증했습니다. 1.x 설치에는 기존 ESLint 9 및 일부 전이 의존성의 deprecated 안내가 나오며, 기존 환경 보존을 위해 이번 배포에서 major를 바꾸지 않았습니다.
 
-GitHub CI 결과: [1.x · 6f9d0ea](https://github.com/HoSeopLee/lint/actions/runs/35698834994), [2.x · 956f5dc](https://github.com/HoSeopLee/lint/actions/runs/35698878799). 두 계열 모두 각 2개 Node 조합을 통과했습니다. 이후 변경은 이 검증 기록에 CI 결과를 추가한 문서 변경입니다.
+GitHub CI 결과: [1.x · 6f9d0ea](https://github.com/HoSeopLee/lint/actions/runs/35698834994), [2.x · 956f5dc](https://github.com/HoSeopLee/lint/actions/runs/35698878799). 두 계열 모두 각 2개 Node 조합을 통과했습니다. 위 CI는 scope 확정 전 기준입니다. `@broccoil/lint` 이름 반영 후에도 두 tarball의 모든 공개 경로·React/Next 설치·진단·자동 수정을 로컬 Node 24.18.0에서 다시 확인했습니다. 새 커밋의 CI는 PR checks에서 확인합니다.
 
 ## 배포 전 남은 확인
 
-- [ ] 최종 패키지명/scope 권한 확정 및 해당 이름으로 검증
+- [x] 최종 패키지명 `@broccoil/lint` 및 `broccoil` owner 권한 확인
+- [x] `@broccoil/lint@1.0.0`·`@broccoil/lint@2.0.0` tarball의 React/Next 설치·진단·자동 수정 검증 (Node 24.18.0)
 - [x] GitHub CI 결과 확인 (두 계열 합계 4개 Node 조합 통과)
 - [ ] 브랜치·버전·태그·검증 결과에 대한 사용자 승인
 - [ ] 승인된 변경을 유지 브랜치에 반영하고 두 버전 npm 배포
