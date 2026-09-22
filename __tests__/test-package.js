@@ -4,7 +4,7 @@ import { access, mkdtemp, mkdir, readFile, rm, writeFile } from 'node:fs/promise
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 
-const temporary = await mkdtemp(path.join(tmpdir(), 'hoseop-lint-'));
+const temporary = await mkdtemp(path.join(tmpdir(), 'broccoil-lint-'));
 const npm = (args, cwd = process.cwd()) => execFileSync('npm', args, {
   cwd, encoding: 'utf8', stdio: ['ignore', 'pipe', 'inherit'],
 });

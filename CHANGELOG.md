@@ -1,5 +1,10 @@
 # Changelog
 
+## 미배포
+
+- 설치·설정·규칙 변경·이전 방법을 중심으로 README를 정리합니다.
+- 외부 링크 규칙 ID를 `hoseop-react/no-unsafe-target-blank`에서 `broccoil-react/no-unsafe-target-blank`로 변경합니다. 해당 규칙을 override하거나 inline disable했다면 새 ID로 변경해야 합니다. 이 변경은 이미 게시된 1.0.0에는 포함되지 않습니다.
+
 ## 1.0.0 — 2026-09-22
 
 ### 첫 배포 구성

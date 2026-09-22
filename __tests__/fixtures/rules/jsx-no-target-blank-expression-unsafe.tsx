@@ -1,4 +1,4 @@
-// @expect-rule: hoseop-react/no-unsafe-target-blank
+// @expect-rule: broccoil-react/no-unsafe-target-blank
 import React from 'react';
 
 export const UnsafeExpressionLink = () => (
