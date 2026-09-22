@@ -34,7 +34,7 @@
 | 기존 규칙 fixture | 5/5 통과 | 8/8 통과 |
 | tarball React/Next 설치·진단·수정 | Node 20.19.0, 24.18.0 통과 | Node 22.13.0, 24.18.0 통과 |
 | GitHub CI (Linux) | Node 20.19.0 / 24 통과 | Node 22.13.0 / 24 통과 |
-| 참고 코드와 실행 로직 비교 | 동일 (진입점 주석만 정리) | 동일 (진입점 주석만 정리) |
+| 참고 코드와 규칙 로직 비교 | 동일 (주석·plugin namespace 변경) | 동일 (주석·plugin namespace 변경) |
 | npm pack --dry-run | 19개 파일 | 19개 파일 |
 
 검증에 --force / --legacy-peer-deps를 사용하지 않았습니다. engine-strict 설치로 engine 제약도 확인했습니다. 이 결과는 모든 peer 버전 조합의 호환성을 보장하지 않습니다.
