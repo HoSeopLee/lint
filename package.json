@@ -80,6 +80,7 @@
     "presets/**/*.js",
     "rules/**/*.js",
     "README.md",
+    "README.ko.md",
     "CHANGELOG.md"
   ],
   "publishConfig": {

@@ -35,7 +35,10 @@
 | tarball React/Next 설치·진단·수정 | Node 20.19.0, 24.18.0 통과 | Node 22.13.0, 24.18.0 통과 |
 | GitHub CI (Linux) | Node 20.19.0 / 24 통과 | Node 22.13.0 / 24 통과 |
 | 참고 코드와 규칙 로직 비교 | 동일 (주석·plugin namespace 변경) | 동일 (주석·plugin namespace 변경) |
-| npm pack --dry-run | 19개 파일 | 19개 파일 |
+| npm pack --dry-run (현재 브랜치) | 20개 파일 | 20개 파일 |
+| README의 pnpm 설치·React/Next 검사 (pnpm 11.13.0 / Node 24.18.0) | 게시된 1.0.0 통과 | 2.0.0 tarball 통과 |
+
+영문 `README.md`와 한국어 `README.ko.md`를 함께 제공합니다. 두 문서의 실행 예제가 같은지 확인했고, 한국어 문서도 배포 파일 목록에 추가했습니다. 이미 게시된 1.0.0은 기존 19개 파일을 유지합니다.
 
 검증에 --force / --legacy-peer-deps를 사용하지 않았습니다. engine-strict 설치로 engine 제약도 확인했습니다. 이 결과는 모든 peer 버전 조합의 호환성을 보장하지 않습니다.
 
