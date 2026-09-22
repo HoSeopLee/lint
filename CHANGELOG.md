@@ -1,10 +1,10 @@
 # Changelog
 
-## 1.0.0 — 배포 준비 중
+## 1.0.0 — 2026-09-22
 
 ### 첫 배포 구성
 
-- npm 조직 `broccoil`의 `@broccoil/lint`로 배포를 준비합니다. 아직 npm에 게시하지 않았습니다.
+- npm 조직 `broccoil`의 `@broccoil/lint`의 첫 공개 버전을 제공합니다.
 - 참고 1.1.1의 React/Next Flat Config와 모든 공개 경로를 유지합니다. 참고 번호와 새 패키지의 배포 번호는 별개입니다.
 - ESLint 9, TypeScript 4.8.4 이상 6 미만, Node 20.19.0 이상의 기존 환경을 대상으로 합니다.
 - React 단독 사용에는 Next plugin이 필요하지 않습니다. Next preset에는 프로젝트에 맞춰 `@next/eslint-plugin-next@15` 또는 `@16`을 별도로 설치합니다.
