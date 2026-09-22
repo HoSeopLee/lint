@@ -1,12 +1,10 @@
-# 다른 컴퓨터에서 작업 이어가기
+# 개발 환경과 브랜치 운영
 
-## 현재 상태
+## 합의한 방식
 
-현재 저장소에는 README, 설계·호환성 문서, 두 버전의 참고 코드와 테스트가 있습니다. 실제 배포용 패키지, workspace 설정, lockfile, 루트 CI는 아직 없습니다. npm 배포와 의존성 설치·lint 실행 검증도 하지 않았습니다.
+같은 저장소와 npm 패키지 `@broccoil/lint`를 사용합니다. `1.x` 브랜치는 1.0.0부터 legacy를 유지하고, `main`은 2.0.0부터 modern을 유지합니다. 각 브랜치의 루트 package.json과 package-lock.json이 해당 계열의 배포 단위입니다.
 
-`reference/v1.1.1`과 `reference/v2.0.1`은 과거 설정의 참고 기준입니다. 새 패키지의 버전 관리용 디렉터리가 아니며, 직접 배포하지 않습니다. 개인 명칭으로 정리한 파일이므로 원본과 완전히 동일한 스냅샷도 아닙니다. 필요한 구현과 회귀 테스트를 옮기고 검증한 뒤 참고 폴더는 제거할 수 있습니다.
-
-회사명이 들어간 패키지명과 오래된 추가 참고 버전은 다시 가져오지 않습니다. 라이선스의 개인 저작권 고지는 유지합니다.
+modern 소스는 `main`, legacy 소스는 `1.x`에 둡니다. 초기 분리 내역은 [PR #1](https://github.com/HoSeopLee/lint/pull/1)에서 확인할 수 있습니다. 참고 폴더를 workspace에 연결하거나 런타임에서 import하지 않습니다.
 
 ## 다른 컴퓨터에서 시작
 
@@ -14,64 +12,61 @@
 git clone https://github.com/HoSeopLee/lint.git
 cd lint
 git switch main
-git pull --ff-only
-git switch -c feat/modern-presets
+nvm use
+npm ci --engine-strict
+npm test
+npm run test:package
 ```
 
-위 브랜치 생성은 새 작업을 시작할 때 사용합니다. 이미 다른 컴퓨터에서 해당 브랜치를 만들어 푸시했다면 `git fetch origin` 후 기존 브랜치로 전환합니다.
+1.x 작업은 `git switch 1.x` 후 다시 `npm ci --engine-strict`를 실행합니다. 개발 작업은 해당 유지 브랜치에서 `codex/<작업명>` 브랜치를 만들어 진행합니다. Node 24를 기본 개발 환경으로 사용하고 CI에서 해당 계열의 최소 Node도 확인합니다.
 
-문서는 이 파일 → [작업 계획](roadmap.md) → [호환성 분석](compatibility.md) → [참고 자료](../reference/README.md) 순서로 읽습니다. 참고 코드가 저장소에 포함되어 있어 이전 컴퓨터의 로컬 폴더나 과거 프로젝트 checkout은 필요하지 않습니다.
-
-현재는 루트 package.json이 없으므로 clone 직후 루트에서 npm install/test/publish를 실행하는 단계가 아닙니다.
-
-## 합의한 관리 방향
-
-한 GitHub 저장소에서 관련 패키지를 관리하는 모노레포 방식으로 진행합니다. npm workspace를 기본 도구로 검토하며, 두 패키지 규모에서 별도 대형 관리 도구를 먼저 도입하지 않습니다.
+## 구조
 
 ```text
-lint/
-├─ package.json                 # private: true, workspaces: ["packages/*"]
-└─ packages/
-   ├─ lint/
-   │  ├─ package.json           # name: @hoseop/lint
-   │  └─ src/                   # modern 설정
-   └─ lint-legacy/
-      ├─ package.json           # name: @hoseop/lint-legacy
-      └─ src/                   # legacy 설정
+package.json
+package-lock.json
+index.js / react.js / next.js
+presets/
+rules/
+__tests__/
+.github/workflows/ci.yml
+README.md
+CHANGELOG.md
+docs/
+reference/                  # 비교용, 배포 제외
 ```
 
-이것은 목표 구조이며 아직 구현하지 않았습니다. legacy 패키지는 후속 작업 때 생성합니다. 루트는 관리용으로만 쓰고 npm에 배포하지 않습니다.
+## 검증
 
-- 함께 관리: Git 저장소, 작업 검토, 공통 정책과 개발 문서
-- 따로 관리: 패키지명, dependencies/peerDependencies, Node 요구 조건, exports, 버전과 배포
-- workspace 설치와 독립 설치는 다름: 각 패키지를 pack한 결과를 격리된 소비 프로젝트에 설치해 검증
-- 공통 코드: 패키지 바깥 파일의 상대 import에 기대지 않고 배포물 포함 여부를 확인
+- `npm test`: 기존 entry point 로드, parser와 lint 실행, 규칙 fixture, import 수정 검사
+- `npm run test:package`: tarball 파일 목록, 격리된 React/Next 설치, 정상 코드 무진단, 오류 진단, 정확한 import 정렬과 재수정 안정성
+- CI: lockfile의 의존성으로 설치·테스트하고, tarball 소비 프로젝트에서는 선언 범위에 맞는 의존성을 새로 해석해 확인
 
-npm은 workspace를 지정하거나 해당 패키지 디렉터리에서 실행해 개별 배포할 수 있습니다. 실제 배포는 이름·권한·테스트·tarball 검증이 끝난 뒤 진행합니다. [npm workspaces 공식 문서](https://docs.npmjs.com/cli/v11/using-npm/workspaces/) 참고.
+정책 변경은 기존 설정 이전과 분리합니다. 두 계열에 필요한 버그 수정은 각각 적용하고 검증합니다. major 간 브랜치를 통째로 병합해 의존성을 섞지 않습니다.
 
-## 버전 관리
+## 배포
 
-| 패키지 | 설정 기반 | 첫 버전 제안 | Git 태그 예시 |
-| --- | --- | --- | --- |
-| `@hoseop/lint` | 참고 2.0.1 | `0.1.0` | `lint-v0.1.0` |
-| `@hoseop/lint-legacy` | 참고 1.1.1 | `0.1.0` | `lint-legacy-v0.1.0` |
+**실제 npm 업로드는 분리 결과·검증 기록·배포 대상에 대한 사용자 승인을 받은 뒤에만 실행합니다.** CI는 테스트만 수행합니다. push나 태그 생성만으로 배포되지 않습니다.
 
-참고 버전 번호를 새 패키지 버전으로 이어받지 않습니다. 각 package.json에서 버전을 관리하고 해당 릴리스의 코드는 Git 태그로 고정합니다. 변경 사항은 패키지별 CHANGELOG에 작성합니다. 릴리스마다 소스를 버전 폴더로 복사하지 않습니다.
+승인 전 `npm whoami`, 패키지명/scope 권한, 미사용 버전 번호, 깨끗한 Git 상태, 아래 검사를 확인합니다.
 
-두 패키지가 같은 버전 번호를 가져도 충돌하지 않습니다. 다만 독립 버전 관리를 기본으로 하여 modern만 수정되면 modern만 올리고 배포합니다. 공통 코드 변경이 양쪽 배포물에 영향을 주면 둘 다 검증하고 필요한 버전을 올립니다.
+```sh
+npm ci --engine-strict
+npm test
+npm run test:package
+npm pack --dry-run
+```
 
-## 바로 다음 작업
+승인된 계열의 브랜치에서 실행합니다.
 
-1. 사용할 Node·npm 버전을 정하고 `@hoseop` scope 권한과 패키지명 사용 가능 여부를 확인합니다. 권한·사용 가능 여부는 아직 확인하지 않았습니다.
-2. 루트 private workspace와 `packages/lint`를 생성합니다. 패키지 이름은 modern `@hoseop/lint`, legacy `@hoseop/lint-legacy` 방향입니다.
-3. `reference/v2.0.1`에서 React/Next 설정과 필요한 회귀 테스트를 옮깁니다. 대규모 규칙 강화와 Oxlint 이관은 섞지 않습니다.
-4. `/react`, `/next` 공개 경로를 검증하고 의존성·exports·engines를 실제 결과에 맞춰 선언합니다. 설치 예시는 아직 동작이 보장되는 API가 아닙니다.
-5. ESLint 10 / TS 6.0.x 기준에서 peer·Node engine과 최소/상한 조합을 확인합니다. 기존 선언 범위는 지원 보장이 아닙니다.
-6. React 단독 / Next 소비자에서 진단·자동 수정·TS no-undef 예외를 테스트합니다. pack 결과를 별도 프로젝트에 설치해 검증합니다.
-7. README와 CHANGELOG를 실제 기능에 맞게 갱신한 뒤 첫 배포를 진행합니다.
+```sh
+# 1.x 브랜치, package.json version: 1.0.0
+npm publish --access public --tag legacy
 
-이후 legacy(1.1.1 기준) → Oxlint/추가 typed lint → Vue/Nuxt 순으로 확장합니다. ESLint 8은 별도 검증이 필요한 후속 목표입니다. 장기 목표 전체의 완료를 첫 npm 배포 조건으로 삼지 않습니다.
+# main 브랜치, package.json version: 2.0.0
+npm publish --access public --tag latest
+```
 
-## 작업 규칙
+package.json의 publishConfig에도 계열별 태그를 지정합니다. prepublishOnly는 테스트와 tarball 소비 검증을 실행합니다. 처음 배포한 뒤 npm 버전·태그를 확인하고 실제 배포된 커밋에 `v1.0.0`, `v2.0.0` Git 태그를 기록합니다. 후속 버전은 계열별로 증가시킵니다.
 
-브랜치는 `feat/modern-presets`처럼 작업 목적을 표현합니다. 커밋은 실제 변경 내용을 간결하게 적습니다. 준비 문서·정책 변경·기능 구현은 검토 가능한 단위로 구분합니다. 인증 정보와 개인 컴퓨터 경로를 저장소에 넣지 않습니다.
+인증 정보는 저장소나 채팅에 넣지 않습니다. scope와 버전은 참고 자료의 이름·번호만 보고 사용 가능하다고 판단하지 않습니다.

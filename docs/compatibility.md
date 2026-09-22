@@ -1,17 +1,17 @@
 # 버전 비교와 호환성 분석
 
-분석일: 2026-09-17. 현재 비교 기준은 `v1.1.1`, `v2.0.1`입니다. 참고 자료의 명칭 정리 범위는 [참고 자료 안내](../reference/README.md)에 기록했습니다. 이 버전 번호는 새 패키지의 릴리스 번호가 아닙니다.
+참고 코드 분석일: 2026-09-17. 배포 구조는 2026-09-22 합의에 맞춰 갱신했습니다. 현재 비교 기준은 `v1.1.1`, `v2.0.1`입니다. 참고 자료의 명칭 정리 범위는 [참고 자료 안내](../reference/README.md)에 기록했습니다. 이 버전 번호는 새 패키지의 릴리스 번호가 아닙니다.
 
-**여기에 적힌 버전 범위는 원본 package.json의 선언입니다. 설치 성공이나 전체 조합의 동작 보장을 의미하지 않습니다.** 현재 단계에서는 정적 분석만 수행했습니다.
+**여기에 적힌 버전 범위는 원본 package.json의 선언입니다. 설치 성공이나 전체 조합의 동작 보장을 의미하지 않습니다.** 아래 표는 참고 코드의 정적 분석입니다. 새 배포 코드의 실행 결과는 [배포 검증 기록](release-checklist.md)을 따릅니다.
 
 ## 주요 결론
 
-1. legacy 기준은 1.1.1로 한정합니다. 첫 배포는 2.0.1 기반 modern에 집중하며 legacy는 후속 단계입니다.
+1. legacy 기준은 1.1.1로 한정합니다. 첫 배포 목표에 1.1.1 기반 legacy(1.0.0)와 2.0.1 기반 modern(2.0.0)을 모두 포함합니다.
 2. 1.1.1은 ESLint 9를 요구합니다. ESLint 8 지원은 별도 검증이 필요한 후속 목표입니다.
 3. 2.0.1은 ESLint `>=10.0.1 <11.0.0`, TypeScript `>=6.0.2 <6.1.0`을 선언합니다. TypeScript 6 전체로 범위를 넓혀 해석하지 않습니다.
 4. 양쪽 모두 ESM / Flat Config입니다. legacy라는 이름이 `.eslintrc` 지원을 뜻하지는 않습니다.
 5. 1.1.1과 2.0.1에는 type-aware lint를 활성화하는 `project` / `projectService`가 없습니다. Promise 검사 등은 새 요구사항입니다.
-6. subpath export는 코드 진입점을 나눌 뿐, peerDependencies와 engines를 진입점별로 분리하지 않습니다. 현재 진행 방향은 한 저장소에서 두 npm 패키지를 독립적으로 배포하는 것입니다.
+6. subpath export는 코드 진입점을 나눌 뿐, peerDependencies와 engines를 진입점별로 분리하지 않습니다. 현재 진행 방향은 하나의 npm 패키지를 브랜치별 major 버전으로 배포하는 것입니다.
 
 ## dependencies / peerDependencies
 
@@ -114,22 +114,20 @@ preset의 규칙 병합 순서는 TypeScript → import → React → a11y → P
 
 ESLint 9라고 TS 5만 쓰거나 ESLint 10이라고 TS 6만 쓰는 것은 아닙니다. 초기 기준은 위 조합이지만, 실제 필요한 교차 조합은 소비 프로젝트 조사 후 매트릭스에 추가합니다.
 
-## 패키지 분리와 의존성 관리
+## 브랜치별 버전과 의존성 관리
 
-현재 진행 방향은 **한 저장소 + 두 npm 패키지**입니다.
+현재 방식은 **한 저장소 + 한 npm 패키지 + 두 유지 브랜치**입니다.
 
-| 폴더 | npm 패키지 | 참고 기준 |
-| --- | --- | --- |
-| `packages/lint` | `@hoseop/lint` | 2.0.1, modern |
-| `packages/lint-legacy` | `@hoseop/lint-legacy` | 1.1.1, legacy |
+| 브랜치 | npm 버전 | 참고 기준 | npm 태그 |
+| --- | --- | --- | --- |
+| 1.x | @broccoil/lint@1.0.0 | 1.1.1, legacy | legacy |
+| main | @broccoil/lint@2.0.0 | 2.0.1, modern | latest |
 
-각 패키지가 자체 package.json에서 peerDependencies·engines·exports·버전을 관리합니다. modern만 변경되면 해당 패키지만 배포할 수 있습니다. 초기 버전은 둘 다 0.1.0을 사용할 수 있지만 번호를 계속 맞출 의무는 없습니다.
+각 브랜치의 루트 package.json에서 peerDependencies·engines·exports·버전을 관리합니다. 서로 다른 ESLint major의 의존성과 lockfile이 브랜치로 분리됩니다. 브랜치를 바꾼 뒤에는 npm ci를 다시 실행합니다.
 
-이 구분은 npm의 배포 단위입니다. npm workspace는 로컬에서 여러 패키지의 설치를 함께 관리하므로 의존성 충돌이 자동으로 모두 사라지는 것은 아닙니다. 특히 서로 다른 ESLint major의 peer 해석과 각 Node 환경을 따로 검증해야 합니다. workspace에 우연히 설치된 의존성을 소비 프로젝트에서도 사용할 수 있다고 가정하지 않습니다.
+각 버전의 tarball을 별도 소비 프로젝트에 설치하고 자신의 의존성만으로 entry point가 로드되는지 확인합니다. --force / --legacy-peer-deps는 호환성 성공으로 취급하지 않습니다. React 소비자에는 optional Next plugin이 없어야 하고 Next 소비자에는 해당 plugin을 명시적으로 설치합니다.
 
-패키지별 tarball을 별도의 소비 프로젝트에 설치하고, 자신의 의존성만으로 entry point가 로드되는지 확인합니다. `--force`나 `--legacy-peer-deps`는 호환성 성공으로 취급하지 않습니다. 공통 모듈을 공유할 경우 배포물에 포함하거나 명시적인 의존성으로 연결합니다.
-
-참고: [npm workspaces](https://docs.npmjs.com/cli/v11/using-npm/workspaces/), [npm peerDependencies](https://docs.npmjs.com/cli/v11/configuring-npm/package-json/#peerdependencies). 구체적인 작업 순서는 [작업 재개 안내](development.md)에 기록합니다.
+공개 경로는 참고 코드와 동일하게 유지합니다. 위 표의 REMOVE/MODERNIZE는 후속 후보이며 이번 배포에서 자동으로 적용하지 않습니다. 실제 npm 업로드는 검증 결과를 사용자에게 제시하고 승인받은 뒤 진행합니다. 구체적인 절차는 [개발 안내](development.md)를 따릅니다.
 
 ## Oxlint 역할
 
@@ -143,8 +141,8 @@ Oxlint에도 [type-aware 모드](https://oxc.rs/docs/guide/usage/linter/type-awa
 
 ## 아직 검증하지 않은 사항
 
-- 원본 및 신규 preset의 실제 설치·실행과 전체 버전 조합
-- npm 게시물과 Git 태그의 일치 여부, `@hoseop` scope 사용 가능 여부
+- 전체 버전 조합의 호환성(일부 확인한 조합은 배포 검증 기록 참조)
+- npm 실제 배포와 Git 태그 (broccoil 조직의 leehoseop owner 권한은 확인됨)
 - 실제 소비 프로젝트 목록과 필요한 Node/ESLint 8 최소 버전
 - plugin별 peer/engine의 전이 제약, npm 외 패키지 매니저 호환성
 - 규칙별 Oxlint 옵션·자동 수정 동등성, Vue/Nuxt parser와 template 범위

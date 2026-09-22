@@ -1,79 +1,105 @@
-# lint
+# @broccoil/lint
 
-Shared lint presets for JavaScript and TypeScript projects, supporting legacy and modern environments with ESLint and Oxlint.
+React와 Next.js 프로젝트에서 사용하는 개인 ESLint Flat Config입니다. 하나의 npm 패키지를 두 major 버전으로 유지합니다.
 
-여러 프로젝트에서 공통으로 사용할 개인용 lint preset 라이브러리입니다. 하나의 저장소에서 `@hoseop/lint`와 `@hoseop/lint-legacy`를 각각 배포하는 방향으로 준비합니다.
+| 계열 | 유지 브랜치 | 첫 배포 버전 | 설정 기준 | npm 태그 |
+| --- | --- | --- | --- | --- |
+| Legacy | `1.x` | `1.0.0` | 참고 1.1.1 | `legacy` |
+| Modern | `main` | `2.0.0` | 참고 2.0.1 | `latest` |
 
-> 현재는 분석과 설계 준비 단계입니다. 새 preset 구현, 의존성 설치, npm 배포는 아직 진행하지 않았습니다. 아래 지원 범위와 API는 목표이며 사용 가능한 기능을 의미하지 않습니다.
+브랜치별 package.json, lockfile, 의존성, 테스트와 CHANGELOG를 독립적으로 관리합니다. 패키지명과 import 경로는 같습니다. workspace나 별도 `lint-legacy` 패키지는 사용하지 않습니다.
 
-## 방향
+## 설치
 
-- 기존 1.1.1 설정을 기존 프로젝트 호환성 기준으로 유지합니다.
-- 2.x는 ESLint 10 / TypeScript 6 환경의 기준으로 활용합니다.
-- 공통 lint 정책을 유지하면서 환경에 맞게 plugin과 규칙 구현을 선택합니다.
-- legacy는 ESLint 중심, modern은 Oxlint와 ESLint의 역할 분담을 검토합니다.
-- npm workspace로 두 패키지를 함께 관리하고, 의존성·버전·배포는 패키지별로 관리합니다.
+프로젝트 환경에 맞는 한 가지 명령을 실행합니다.
 
-## 첫 배포 범위
+```sh
+# ESLint 9 / TypeScript 5 프로젝트
+npm install -D @broccoil/lint@1 eslint@9 typescript@5
 
-먼저 2.0.1 설정을 기반으로 modern React/Next preset을 구현하고, 설치·실행 검증을 마치면 `0.1.0`으로 배포하는 것을 제안합니다. 기존 설정을 활용하되 대규모 규칙 변경은 별도 업데이트로 나눕니다.
+# ESLint 10 / TypeScript 6.0 프로젝트
+npm install -D @broccoil/lint@2 eslint@10 typescript@~6.0.2
+```
 
-legacy는 1.1.1 자료를 보존하며 후속 버전에서 지원합니다. Oxlint, Vue/Nuxt, ESLint 8, 추가 type-aware lint는 첫 배포 조건에 포함하지 않습니다. 전체 지원을 완성할 때까지 첫 배포를 미루지 않습니다.
+필수 plugin은 npm의 peer 의존성 설치로 제공됩니다. 정확한 범위는 설치할 버전의 package.json을 확인하세요. React preset에는 Next plugin이 필요하지 않습니다.
 
-현재는 root package.json과 배포용 entry point가 없어 npm 설치용 패키지가 아닙니다. 실제 구현 후 [배포 기준](docs/roadmap.md)을 통과한 범위만 README에 지원 기능으로 표시합니다.
+Next preset을 사용할 때는 별도로 설치합니다.
 
-## 장기 지원 목표와 현재 근거
+```sh
+# 1.x: Next 15 또는 16 중 프로젝트에 맞는 버전
+npm install -D @next/eslint-plugin-next@15
 
-| 대상 | 목표 | 현재 확인한 기준 |
-| --- | --- | --- |
-| Legacy | ESLint 8/9, TypeScript 5.x, 기존 React/Next 프로젝트 | 1.x 태그는 ESLint 9 기반. ESLint 8은 추가 호환성 검증 필요 |
-| Modern | ESLint 10, TypeScript 6, React/Next | 2.0.1의 선언 범위와 설정을 참고. 새 패키지에서 재검증 필요 |
-| Vue / Nuxt | modern preset 확장 | 기존 구현 없음. 후속 단계 |
-| Oxlint | modern의 지원 규칙 처리 | 기존 구현 없음. 규칙별 동작·옵션·자동 수정 비교 필요 |
+# 2.x: Next 16
+npm install -D @next/eslint-plugin-next@16
+```
 
-참고 기준은 1.1.1과 2.0.1 두 버전입니다. 이 숫자는 참고 자료의 버전이며, 새 `@hoseop/lint`의 배포 버전이 아닙니다.
+Node 지원 선언은 1.x에서 `>=20.19.0`, 2.x에서 `^22.13.0 || >=24.0.0`입니다. 설치 시 각 plugin의 engine 제약도 적용됩니다. 실제 확인한 조합은 [배포 검증 기록](docs/release-checklist.md)에 기록합니다.
 
-## 사용 형태 제안
-
-아래 경로는 설계 예시이며 현재 import할 수 없습니다. 기본 진입점의 의미와 preset 조합 방식은 설치 검증 후 확정합니다.
+## 사용
 
 ```js
-// 기존 React 프로젝트
-import config from '@hoseop/lint-legacy/react';
+// eslint.config.js (ESM 프로젝트)
+import config from '@broccoil/lint/react';
 
-// 최신 React 프로젝트에서는 위 import 대신 사용
-import config from '@hoseop/lint/react';
+export default config;
 ```
 
-Next.js는 `@hoseop/lint-legacy/next`, `@hoseop/lint/next`, Vue/Nuxt는 `@hoseop/lint/vue`, `@hoseop/lint/nuxt`를 검토합니다. ESLint preset을 import하는 것만으로 Oxlint가 실행되지는 않습니다. Oxlint 설정과 실행 명령은 별도로 제공할 계획입니다.
+Next 프로젝트에서는 import 경로를 `@broccoil/lint/next`로 바꿉니다. package.json에 `"type": "module"`이 없다면 설정 파일 이름은 `eslint.config.mjs`로 사용합니다.
 
-## 다른 컴퓨터에서 이어서 작업
+프로젝트 규칙은 preset 뒤에서 덮어씁니다.
 
-[작업 재개 안내](docs/development.md)에서 clone 명령, 패키지 구조, 버전 관리 방식과 다음 작업을 확인하세요. 현재 실제 workspace와 배포용 소스는 아직 생성하지 않았습니다.
+```js
+import config from '@broccoil/lint/react';
 
-## 문서
-
-- [버전 비교와 호환성 분석](docs/compatibility.md): 선언된 지원 범위, 규칙 분류, 의존성 충돌과 이전 전략
-- [구조 제안과 작업 계획](docs/roadmap.md): 구현 순서, 검증 기준, 결정해야 할 항목
-- [버전별 참고 자료](reference/README.md): 기존 설정·테스트와 변경 범위
-
-## 현재 저장소
-
-```text
-README.md
-docs/
-  compatibility.md
-  roadmap.md
-  development.md
-reference/
-  README.md
-  v1.1.1/
-  v2.0.1/
-LICENSE
+export default [
+  ...config,
+  {
+    files: ['**/*.{js,jsx,ts,tsx}'],
+    rules: { 'no-console': 'warn' },
+  },
+];
 ```
 
-`reference`는 비교용 보관 자료입니다. 새 패키지의 런타임 코드나 workspace가 아니며, 향후 npm 배포 파일에서 제외합니다. 기존 프로젝트의 설정 교체는 호환성 검증 후 진행합니다.
+```sh
+npx eslint src
+npx eslint src --fix
+npx prettier . --write
+npx tsc --noEmit
+```
 
-## 라이선스
+Prettier는 기존 정책대로 ESLint에도 연결되어 있습니다. TypeScript 타입 검사는 프로젝트의 tsconfig로 별도 실행하세요. 2.x의 TS 파일에서는 core `no-undef`를 끄고 타입 검사에 맡깁니다. 추가 type-aware lint는 이번 배포에 포함하지 않습니다.
 
-[MIT](LICENSE). 이전한 소스에는 원본 라이선스를 유지합니다.
+기존 공개 경로도 유지합니다: 기본 import(React), `/react`, `/next`, `/ts`, `/a11y`, `/import`, `/prettier`, `/presets/base`, `/presets/react`, `/presets/next`, `/presets/full`(Next alias). 기본 프리셋은 JS/JSX/TS/TSX용이며, base의 globals는 브라우저 기준입니다. `.mjs/.cjs/.mts/.cts`에 같은 규칙이 적용된다고 가정하지 않습니다.
+
+## 1.x에서 2.x로 변경할 때
+
+import 경로는 같지만 지원 환경과 일부 규칙이 다릅니다. 아래 항목을 확인하고 major를 선택하세요.
+
+| 항목 | 1.x | 2.x |
+| --- | --- | --- |
+| ESLint | 9.x | 10.0.1 이상 11 미만 |
+| TypeScript | 4.8.4 이상 6 미만 | 6.0.2 이상 6.1 미만 |
+| 접근성 규칙 ID | `jsx-a11y/*` | `jsx-a11y-x/*` |
+| React plugin | @eslint-react 2.x | @eslint-react 5.x; 일부 rule ID 변경 |
+| 상위 상대 import | 기존 plugin의 alias 변환/fix 정책 | core `no-restricted-imports` 경고, alias 자동 변환 없음 |
+| TS의 core no-undef | 기존 설정 유지 | off; 별도 타입 검사 필요 |
+
+접근성·React rule override와 inline disable을 사용한다면 설치할 버전에 맞게 바꾸세요. 로컬 링크 규칙 ID `hoseop-react/no-unsafe-target-blank`는 호환성을 위해 두 계열 모두 유지합니다. 자세한 차이는 [호환성 분석](docs/compatibility.md), 각 릴리스 변경은 [CHANGELOG](CHANGELOG.md)에 기록합니다.
+
+## 개발 및 배포
+
+```sh
+nvm use
+npm ci --engine-strict
+npm test
+npm run test:package
+```
+
+`test:package`는 실제 tarball을 임시 React·Next 프로젝트에 설치하고 공개 entry point, 진단과 자동 수정을 검증합니다. 테스트가 끝나면 임시 프로젝트를 제거합니다.
+
+- [작업 환경과 브랜치 운영](docs/development.md)
+- [1차 목표와 후속 작업](docs/roadmap.md)
+- [참고 버전의 호환성 분석](docs/compatibility.md)
+- [배포 검증 및 승인](docs/release-checklist.md)
+
+`reference/`는 비교 자료이며 npm에 포함하지 않습니다. [MIT](LICENSE).

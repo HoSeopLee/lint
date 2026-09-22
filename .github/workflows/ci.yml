@@ -1,0 +1,28 @@
+name: CI
+
+on:
+  push:
+    branches: [main, '1.x', 'codex/**']
+  pull_request:
+    branches: [main, '1.x']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node: ['22.13.0', '24']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+      - run: npm ci --engine-strict --ignore-scripts
+      - run: npm test
+      - run: npm run test:package
