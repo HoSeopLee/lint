@@ -4,11 +4,9 @@
 
 같은 저장소와 npm 패키지 `@broccoil/lint`를 사용합니다. `1.x` 브랜치는 1.0.0부터 legacy를 유지하고, `main`은 2.0.0부터 modern을 유지합니다. 각 브랜치의 루트 package.json과 package-lock.json이 해당 계열의 배포 단위입니다.
 
-초기 준비는 `codex/release-2.x`에서 검토할 수 있습니다. 이 브랜치를 main에 반영하면 modern의 유지 브랜치가 됩니다. legacy 소스는 `1.x`에 별도로 둡니다. 참고 폴더를 workspace에 연결하거나 런타임에서 import하지 않습니다.
+modern 소스는 `main`, legacy 소스는 `1.x`에 둡니다. 초기 분리 내역은 [PR #1](https://github.com/HoSeopLee/lint/pull/1)에서 확인할 수 있습니다. 참고 폴더를 workspace에 연결하거나 런타임에서 import하지 않습니다.
 
 ## 다른 컴퓨터에서 시작
-
-아래는 main 반영 후의 절차입니다. 반영 전 검토할 때는 `git switch main` 대신 `git switch codex/release-2.x`를 사용합니다.
 
 ```sh
 git clone https://github.com/HoSeopLee/lint.git
